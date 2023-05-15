@@ -4,8 +4,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.util.Objects;
 
 public class LoginStepDefinition {
     WebDriver driver;
@@ -37,6 +40,14 @@ public class LoginStepDefinition {
 
     @When("I enter username {string} and password {string} and perform login")
     public void login(String username, String password){
+//        Objects.nonNull(username);
+       if(username !=null && !username.isEmpty()){
+           driver.findElement(By.xpath("username")).sendKeys(username);
+       }
+       if (password !=null && !password.isEmpty()){
+           driver.findElement(By.xpath("password")).sendKeys(username);
+
+       }
 
         System.out.println("username is : " + username );
         System.out.println("The password is : "+ password);
