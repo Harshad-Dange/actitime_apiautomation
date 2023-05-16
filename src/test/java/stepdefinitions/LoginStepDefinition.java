@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class LoginStepDefinition {
@@ -36,6 +37,13 @@ public class LoginStepDefinition {
     public void launchBrowser(String browser){
         //code to launch the browser
         System.out.println("The browser is: "+ browser);
+
+        if(browser.equals("chrome")){
+            //launch chrome browser
+        } else if (browser.equals("edge")) {
+            //launch edge browser
+        }
+
     }
 
     @When("I enter username {string} and password {string} and perform login")
@@ -54,5 +62,11 @@ public class LoginStepDefinition {
     }
 
 
+    @When("I enter below credentials")
+    public void iEnterBelowCredentials(Map<String,String> creds) {
+        driver.findElement(By.xpath("username")).sendKeys(creds.get("username"));
+        driver.findElement(By.xpath("password")).sendKeys(creds.get("password"));
+        driver.findElement(By.xpath("login")).click();
 
+    }
 }
