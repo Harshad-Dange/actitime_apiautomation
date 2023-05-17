@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -26,10 +27,11 @@ public class LoginStepDefinition {
     }
 
     @Then("I verify user is logged in to application successfully")
-    public void iVerifyUserIsLoggedInToApplicationSuccessfully() {
+    public void iVerifyUserIsLoggedInToApplicationSuccessfully(List<String> data) {
 
         //verify login successfully
         System.out.println("Code to verify successfull login ");
+        System.out.println(data);
 //        driver.getTitle();
     }
 

@@ -1,5 +1,6 @@
 package stepdefinitions;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -9,7 +10,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.sql.SQLOutput;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class PIMStepDefinition {
     WebDriver driver;
@@ -18,8 +22,7 @@ public class PIMStepDefinition {
         System.out.println("This is login method and user name is :"+ username + " and password is :" + password);
     }
 
-
-    @Given("I add employee in the application")
+/*    @Given("I add employee in the application")
     public void iAddEmployeeInTheApplication(Map<String,String> empDetails) {
         System.out.println("This is add emp method");
 
@@ -29,25 +32,13 @@ public class PIMStepDefinition {
         for(Map.Entry<String,String> empObj: empDetails.entrySet()){
             System.out.println(empObj.getKey() + " : "+ empObj.getValue());
 
-        }
-
-        System.out.println("Iterating empDetail through forEach");
-        empDetails.forEach((key,val)->{
-            System.out.println(key+ " : "+ val);
-        } );
-
-         driver= new ChromeDriver();
-        driver.findElement(By.xpath("enterFirstName")).sendKeys(empDetails.get("firstName"));
-        driver.findElement(By.xpath("enterLastName")).sendKeys(empDetails.get("lastName"));
-        if(empDetails.get("loginCredentials").equals("true")){
-           driver.findElement(By.xpath("clickOnRadioButton")).click();
-           driver.findElement(By.xpath("username")).sendKeys(empDetails.get("username"));
-            driver.findElement(By.xpath("password")).sendKeys(empDetails.get("password"));
-            driver.findElement(By.xpath("confirmPass")).sendKeys(empDetails.get("confirmPassword"));
-
-
-        }
-
+        }*/
+        @Given("I add employee in the application")
+        public void iAddEmployeeInTheApplication(DataTable empDetails) {
+           List<Map<String,String>> data= empDetails.asMaps();
+            Map<String,String> map= data.get(0);
+            System.out.println(map.get("firstName"));
+            System.out.println(map.get("empId"));
     }
 
     @Then("Verify employee added successfully")
@@ -66,8 +57,19 @@ public class PIMStepDefinition {
     }
 
     @Given("I select any filter from filter section")
-    public void iSelectAnyFilterFromFilterSection() {
+    public void iSelectAnyFilterFromFilterSection(List<String> filters) {
         System.out.println("This is select filter method");
+        System.out.println(filters);
+//        String [] filter = filters.split(",");
+//        for (String var :filter){
+//            System.out.println(var);
+//        }
+//     Arrays.stream(filter).forEach(val-> System.out.println(val));
+        for (String val: filters){
+            System.out.println(val);
+        }
+        filters.forEach(val-> System.out.println(val));
+
     }
 
     @When("I click on Reset button")
