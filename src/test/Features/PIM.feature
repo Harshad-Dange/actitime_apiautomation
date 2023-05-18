@@ -73,4 +73,13 @@ Feature: Verify the PIM module
       | cyber               | success  | 001   | true             | cbersucccess | Test      | Test            | Should have at least 7 characters |
 
 
+    Scenario: Verify Employee CRUD operation
+      Given I add 3 employee in the application
+      Then I verify employee added successfully in the system
+      When I search the newly added with employee status filter
+      And I update the employee information
+      And I search the updated employee
+      Then I delete the employee
+
+
 

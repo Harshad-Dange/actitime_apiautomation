@@ -52,13 +52,11 @@ public class LoginStepDefinition {
     public void login(String username, String password){
 //        Objects.nonNull(username);
        if(username !=null && !username.isEmpty()){
-           driver.findElement(By.xpath("username")).sendKeys(username);
+//           driver.findElement(By.xpath("username")).sendKeys(username);
        }
        if (password !=null && !password.isEmpty()){
-           driver.findElement(By.xpath("password")).sendKeys(username);
-
+//           driver.findElement(By.xpath("password")).sendKeys(username);
        }
-
         System.out.println("username is : " + username );
         System.out.println("The password is : "+ password);
     }

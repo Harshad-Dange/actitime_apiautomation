@@ -90,4 +90,15 @@ public class PIMStepDefinition {
         Assert.assertEquals(errorMsg.get("errorMsg"),actualErrorMsg);
 
     }
+
+    @Given("I add {int} employee in the application")
+    public void iAddEmployeeInTheApplication(int count) {
+            for(int i=0; i<count; i++){
+
+                //add employee logic
+
+
+            }
+
+    }
 }
