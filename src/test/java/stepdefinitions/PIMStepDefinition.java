@@ -1,6 +1,7 @@
 package stepdefinitions;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -39,6 +40,8 @@ public class PIMStepDefinition {
             Map<String,String> map= data.get(0);
             System.out.println(map.get("firstName"));
             System.out.println(map.get("empId"));
+
+            System.out.println(empDetails.asList());
     }
 
     @Then("Verify employee added successfully")
@@ -97,8 +100,22 @@ public class PIMStepDefinition {
 
                 //add employee logic
 
-
             }
+    }
+
+    @Before("@Color1")
+    public void beforeTag(){
+        System.out.println("This is conditional tag hook for color scenario");
+    }
+
+    @Given("I take different colors as a input")
+    public void iTakeDifferentColorsAsAInput(DataTable colors) {
+
+        System.out.println(colors.asList());
+
+        System.out.println(colors.asLists());
+
+
 
     }
 }

@@ -1,9 +1,6 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -27,6 +24,8 @@ public class Main {
         employeeDetails.setData(data);
         employeeDetails.setCity("Pune");
         employeeDetails.setCompanyName("TCS");
+
+        Optional.of(employeeDetails).ifPresent(val-> System.out.println(val.getData()));
 
         detailsList.add(employeeDetails);
 //        List<String>

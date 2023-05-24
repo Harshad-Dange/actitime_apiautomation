@@ -43,6 +43,7 @@ Feature: Verify the PIM module
 #    When I click on Reset button
 #    Then I verify all filter should get reset
 
+  @Color2
   Scenario: Verify reset filter
     Given I select any filter from filter section
 #    |firstName , lastName  , empStatus, empId,username|
@@ -54,7 +55,27 @@ Feature: Verify the PIM module
     When I click on Reset button
     Then I verify all filter should get reset
 
+    ## This hook will considered as a Tag as well as its been treated as a conditional hook
+    ## Color1 is a tag hook, because it has a dedicated hook (@Before/@After) and also treated as Tag
+    ## Color2 is a only tag because it does not have any dedicated hook
+  @Color1
+  Scenario: Sample1
+    Given I take different colors as a input
+      | Red  ,   Black |
+      | Black ,  Green |
+      | Yellow , Brown |
+      | Pink  ,  White |
 
+  @Color2
+  Scenario: Sample2
+    Given I take different colors as a input
+      | Red    |
+      | Black  |
+      | Yellow |
+      | Pink   |
+
+
+  @AddEmp
   Scenario Outline: Verify add emp feature with invalid details
     Given I add employee in the application
       | firstName   | lastName   | empId   | loginCredentials   | username   | password   | confirmPassword   |
@@ -66,20 +87,20 @@ Feature: Verify the PIM module
       | test,qtee,1323,3232 | test     | 001   | flase            |              |           |                 | Required                          |
       | test                |          | 001   | flase            |              |           |                 | Required                          |
       |                     |          | 001   | flase            |              |           |                 | Required                          |
-      | cyber success               | success  |       | true             |              | Test1234  | Test1234        | Required                          |
+      | cyber success       | success  |       | true             |              | Test1234  | Test1234        | Required                          |
       | cyber               | success  | 001   | true             | cbersucccess |           |                 | Required                          |
       | cyber               | success  | 001   | true             | cbersucccess | Test123   |                 |                                   |
       | cyber               | success  | 001   | true             | cbersucccess | Test12345 | Test123456      | Passwords do not match            |
       | cyber               | success  | 001   | true             | cbersucccess | Test      | Test            | Should have at least 7 characters |
 
 
-    Scenario: Verify Employee CRUD operation
-      Given I add 3 employee in the application
-      Then I verify employee added successfully in the system
-      When I search the newly added with employee status filter
-      And I update the employee information
-      And I search the updated employee
-      Then I delete the employee
+  Scenario: Verify Employee CRUD operation
+    Given I add 3 employee in the application
+    Then I verify employee added successfully in the system
+    When I search the newly added with employee status filter
+    And I update the employee information
+    And I search the updated employee
+    Then I delete the employee
 
 
 
