@@ -9,14 +9,12 @@ import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class CustomerStepDefinition extends BaseClass {
 
     @Given("I set up the request structure")
-    public void setup(Map<String, Object> data) {
+    public void setup(Map<String, Object> queryParams) {
 
         RestAssured.useRelaxedHTTPSValidation();
         requestSpecification = RestAssured.given();
@@ -30,8 +28,8 @@ public class CustomerStepDefinition extends BaseClass {
                 .log()
                 .all();
         //check if query param is not null... if it is not null then add query params in the requestSpecification
-        if (Objects.nonNull(data)) {
-            requestSpecification.queryParams(data);
+        if (Objects.nonNull(queryParams)) {
+            requestSpecification.queryParams(queryParams);
         }
 
 
@@ -86,5 +84,39 @@ public class CustomerStepDefinition extends BaseClass {
         Assert.assertTrue(actualResult); //  assert the line if actualResult variable value if not true
         Assert.assertTrue(actualArchived); // asserting the archived value in Joda Consulting Inc customer
 
+    }
+
+    @Then("I verify customer response is getting sorted in {string} order")
+    public void iVerifyCustomerResponseIsGettingSortedInOrder(String order) {
+
+        //write a logic to verify response is getting sorted in the provided order
+
+        Assert.assertEquals(200, response.getStatusCode());
+
+        //Print all descriptions of customers
+        System.out.println(response.jsonPath().getList("items.description"));
+
+        //print all allowedActions field values
+        List<Map<String, Boolean>> allowedActions=response.jsonPath().getList("items.allowedActions");
+        System.out.println(allowedActions);
+
+        //get all names from the response
+        List<String> names= response.jsonPath().getList("items.name");
+        System.out.println("unsorted list: "+ names);
+       // create an object of list and add previous list into it
+        List<String> actualSortedList = new ArrayList<>();
+        actualSortedList.addAll(names);
+
+        if(order.equals("desc")) {
+            //sort the list in desc order
+            Collections.reverse(names);
+            System.out.println("Desc Order " + names);
+        }
+        else if (order.equals("asc")) {
+            //sort the list in asc order
+            Collections.sort(names);
+            System.out.println("Asc Order: "+ names);
+        }
+        Assert.assertTrue( names.contains(actualSortedList));
     }
 }
