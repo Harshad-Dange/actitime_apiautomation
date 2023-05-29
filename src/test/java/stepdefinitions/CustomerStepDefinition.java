@@ -5,8 +5,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
 
 import java.util.*;
@@ -107,16 +105,38 @@ public class CustomerStepDefinition extends BaseClass {
         List<String> actualSortedList = new ArrayList<>();
         actualSortedList.addAll(names);
 
+        Comparator<String> comparator = new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                return s1.compareToIgnoreCase(s2);
+            }
+        };
+
+        //replace above code with lambda expression
+
+        Comparator<String> comp = (s1, s2)-> {
+            return s1.compareToIgnoreCase(s2);
+        };
+
+        Comparator<String> comp1 = String::compareToIgnoreCase;
+
+
         if(order.equals("desc")) {
             //sort the list in desc order
-            Collections.reverse(names);
+//            Collections.reverse(names);
+
+            Collections.sort(names, Collections.reverseOrder(comparator));
             System.out.println("Desc Order " + names);
         }
         else if (order.equals("asc")) {
             //sort the list in asc order
-            Collections.sort(names);
+//            Collections.sort(names);
+
+            Collections.sort(names , comparator);
+            names.sort(comparator);
+
             System.out.println("Asc Order: "+ names);
         }
-        Assert.assertTrue( names.contains(actualSortedList));
+        Assert.assertTrue(names.equals(actualSortedList));
     }
 }
