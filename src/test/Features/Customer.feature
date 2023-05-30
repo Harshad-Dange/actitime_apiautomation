@@ -16,7 +16,7 @@ Feature: Verify customer feature
       | GET    | customers | 6         |
 
 
-    @CustomerSorting
+  @CustomerSorting
   Scenario Outline: verify customer response is getting sorted in asc and desc order by name
     Given I set up the request structure
       | sort | <value> |
@@ -28,3 +28,26 @@ Feature: Verify customer feature
       | value | order |
       | -name | desc  |
       | name  | asc   |
+
+  @CreateCustomer
+  Scenario: Verify create customer using valid details
+    Given I set up the request structure to create customer
+      | name          |
+      | Cyber Success2 |
+    When I hit an api
+      | method | endPoint  |
+      | POST   | customers |
+    Then I verify customer is getting create succesfully with name "Cyber Success2"
+    When I set up the request structure get customer information
+    And I hit an api
+      | method | endPoint  |
+      | GET    | customers |
+
+
+
+
+
+
+
+
+
