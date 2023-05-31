@@ -154,11 +154,26 @@ public class CustomerStepDefinition extends BaseClass {
     public void iSetUpTheRequestStructureToCreateCustomer(DataTable table) {
         //Get the name of customer from feature file using datatable
         String customerName = table.asMaps().get(0).get("name");
+        String archived = table.asMaps().get(0).get("archived");
+        String reqBody;
+        if (Objects.isNull(customerName)) {
+            reqBody = "{\n" +
+                    "    \"name\": null,\n" +
+                    "    \"archived\": false\n" +
+                    "}";
+        }else if(customerName.equals("empty")){
+            reqBody= "{\n" +
+                    "    \"name\": \"\",\n" +
+                    "    \"archived\": false\n" +
+                    "}";
+        }
+        else {
+            reqBody= "{\n" +
+                    "    \"name\": \""+customerName+"\",\n" +
+                    "    \"archived\": false\n" +
+                    "}";
+        }
 
-        String reqBody = "{\n" +
-                "    \"name\": \"" + customerName + "\",\n" +
-                "    \"archived\": false\n" +
-                "}";
 
         RestAssured.useRelaxedHTTPSValidation();
         requestSpecification = RestAssured.given();
@@ -211,5 +226,50 @@ public class CustomerStepDefinition extends BaseClass {
                 .header("Content-Type", "application/json")
                 .log()
                 .all();
+    }
+
+    @Then("I verify the status code as {int} and error message")
+    public void iVerifyTheStatusCodeAsAndErrorMessageAs(int statusCode, Map<String,String> data) {
+
+        //verify status code
+        Assert.assertEquals(statusCode , response.getStatusCode());
+
+        //verify an error message
+        Assert.assertEquals(data.get("message") , response.jsonPath().getString("message"));
+
+
+    }
+
+    @Given("I set up the request structure to create customer payload")
+    public void iSetUpTheRequestStructureToCreateCustomerPayload(DataTable table) {
+
+        Map<String, String> payload = table.asMaps().get(0);
+        RestAssured.useRelaxedHTTPSValidation();
+        requestSpecification = RestAssured.given();
+        //uri =  https://demo.actitime.com
+        requestSpecification.baseUri("https://demo.actitime.com")
+                .basePath("/api/v1")
+                .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
+//                .auth()
+//                .basic("admin", "manager")  // declared in the AuthenticationSpecification interface and return RequestSpecification referance
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(payload)
+                .log()
+                .all();
+
+
+    }
+
+    @Then("I verify the status code as {int} and archived value in response")
+    public void iVerifyTheStatusCodeAsAndArchivedValueInResponse(int statusCode,boolean expectedArchive) {
+
+        //verify status code
+        Assert.assertEquals(statusCode , response.getStatusCode());
+
+        //verify archive value in response
+        Assert.assertEquals(expectedArchive , response.jsonPath().getBoolean("archived"));
+
+
     }
 }
