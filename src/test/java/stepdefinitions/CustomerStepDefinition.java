@@ -11,8 +11,6 @@ import java.util.*;
 
 public class CustomerStepDefinition extends BaseClass {
 
-    private int customerId;
-
     @Given("I set up the request structure")
     public void setup(Map<String, Object> queryParams) {
 
@@ -270,6 +268,7 @@ public class CustomerStepDefinition extends BaseClass {
         //verify archive value in response
         Assert.assertEquals(expectedArchive , response.jsonPath().getBoolean("archived"));
 
+       customerId=  response.jsonPath().getInt("id");
 
     }
 }

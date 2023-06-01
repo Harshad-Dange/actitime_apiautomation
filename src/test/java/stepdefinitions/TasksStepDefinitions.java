@@ -1,11 +1,16 @@
 package stepdefinitions;
 
 import com.google.gson.JsonObject;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import io.restassured.RestAssured;
 import org.junit.Assert;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TasksStepDefinitions extends BaseClass{
 
@@ -53,16 +58,44 @@ public class TasksStepDefinitions extends BaseClass{
         if(allowedAction.get("canModify")){
 
         }
-
         //print cabn delete value
         System.out.println(allowedAction.get("canDelete"));
-
-
-
         System.out.println(response.jsonPath().getJsonObject("items[0]").toString());
 
+    }
+
+    @When("I setup the request structure to create task")
+    public void iSetupTheRequestStructureToCreateTask(DataTable table) {
+        Map<String,String> createTaskBody = table.asMaps().get(0);
+        Map<String, String> payload = new HashMap<>();
+        payload.putAll(createTaskBody);
+        payload.put("projectId", String.valueOf(projectId));
 
 
+        RestAssured.useRelaxedHTTPSValidation();
+        requestSpecification = RestAssured.given();
+        //uri =  https://demo.actitime.com
+        requestSpecification.baseUri("https://demo.actitime.com")
+                .basePath("/api/v1")
+                .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
+//                .auth()
+//                .basic("admin", "manager")  // declared in the AuthenticationSpecification interface and return RequestSpecification referance
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(payload)
+                .log()
+                .all();
+    }
 
+    @Then("I verify task is created successfully")
+    public void iVerifyTaskIsCreatedSuccessfully(DataTable table) {
+        Map<String, String> createTaskBody  = table.asMaps().get(0);
+        Assert.assertEquals(200, response.getStatusCode());
+        Assert.assertEquals(createTaskBody.get("name"), response.jsonPath().getString("name"));
+        Assert.assertEquals(createTaskBody.get("status"), response.jsonPath().getString("status"));
+        Assert.assertEquals(Integer.parseInt(createTaskBody.get("typeOfWorkId")), response.jsonPath().getInt("typeOfWorkId"));
+        Assert.assertEquals(customerId, response.jsonPath().getInt("customerId"));
+        Assert.assertEquals(projectId, response.jsonPath().getInt("projectId"));
+        Assert.assertEquals(Integer.parseInt(createTaskBody.get("estimatedTime")), response.jsonPath().getInt("estimatedTime"));
     }
 }

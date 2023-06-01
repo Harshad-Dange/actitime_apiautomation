@@ -80,7 +80,6 @@ Feature: Verify customer feature
     Then I verify the status code as 200 and archived value in response
     |false|
 
-
 #    1. Verify customer should not be created with invalid cred
 #    2. Verify customer should not be created with invalid http method
 #    3. Verify customer should not be created with invalid endpoint
