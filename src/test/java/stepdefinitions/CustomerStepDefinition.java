@@ -7,6 +7,10 @@ import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import org.junit.Assert;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class CustomerStepDefinition extends BaseClass {
@@ -159,15 +163,14 @@ public class CustomerStepDefinition extends BaseClass {
                     "    \"name\": null,\n" +
                     "    \"archived\": false\n" +
                     "}";
-        }else if(customerName.equals("empty")){
-            reqBody= "{\n" +
+        } else if (customerName.equals("empty")) {
+            reqBody = "{\n" +
                     "    \"name\": \"\",\n" +
                     "    \"archived\": false\n" +
                     "}";
-        }
-        else {
-            reqBody= "{\n" +
-                    "    \"name\": \""+customerName+"\",\n" +
+        } else {
+            reqBody = "{\n" +
+                    "    \"name\": \"" + customerName + "\",\n" +
                     "    \"archived\": false\n" +
                     "}";
         }
@@ -191,19 +194,19 @@ public class CustomerStepDefinition extends BaseClass {
     @Then("I verify customer is getting create succesfully with name {string}")
     public void iVerifyCustomerIsGettingCreateSuccesfullyWithName(String expectedName) {
 
-            Assert.assertEquals(200, response.getStatusCode());
+        Assert.assertEquals(200, response.getStatusCode());
 
-            customerId = response.jsonPath().getInt("id");
+        customerId = response.jsonPath().getInt("id");
 
-           String actualName=  response.jsonPath().getString("name");
+        String actualName = response.jsonPath().getString("name");
 
-           //verify customer name from the response
-           Assert.assertEquals(expectedName ,actualName);
+        //verify customer name from the response
+        Assert.assertEquals(expectedName, actualName);
 
-           //verify archived field  value and it should be false
-           Assert.assertFalse(response.jsonPath().getBoolean("archived"));
+        //verify archived field  value and it should be false
+        Assert.assertFalse(response.jsonPath().getBoolean("archived"));
 
-            //verify description should be null
+        //verify description should be null
 //        Assert.assertTrue(response.jsonPath().get("description") == null);
 
         Assert.assertTrue(Objects.isNull(response.jsonPath().get("description")));
@@ -227,19 +230,19 @@ public class CustomerStepDefinition extends BaseClass {
     }
 
     @Then("I verify the status code as {int} and error message")
-    public void iVerifyTheStatusCodeAsAndErrorMessageAs(int statusCode, Map<String,String> data) {
+    public void iVerifyTheStatusCodeAsAndErrorMessageAs(int statusCode, Map<String, String> data) {
 
         //verify status code
-        Assert.assertEquals(statusCode , response.getStatusCode());
+        Assert.assertEquals(statusCode, response.getStatusCode());
 
         //verify an error message
-        Assert.assertEquals(data.get("message") , response.jsonPath().getString("message"));
+        Assert.assertEquals(data.get("message"), response.jsonPath().getString("message"));
 
 
     }
 
     @Given("I set up the request structure to create customer payload")
-    public void iSetUpTheRequestStructureToCreateCustomerPayload(DataTable table) {
+    public void iSetUpTheRequestStructureToCreateCustomerPayload(DataTable table) throws IOException {
 
         Map<String, String> payload = table.asMaps().get(0);
         RestAssured.useRelaxedHTTPSValidation();
@@ -252,23 +255,21 @@ public class CustomerStepDefinition extends BaseClass {
 //                .basic("admin", "manager")  // declared in the AuthenticationSpecification interface and return RequestSpecification referance
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .body(payload)
-                .log()
-                .all();
+                .body(payload).log().all();
 
 
     }
 
     @Then("I verify the status code as {int} and archived value in response")
-    public void iVerifyTheStatusCodeAsAndArchivedValueInResponse(int statusCode,boolean expectedArchive) {
+    public void iVerifyTheStatusCodeAsAndArchivedValueInResponse(int statusCode, boolean expectedArchive) {
 
         //verify status code
-        Assert.assertEquals(statusCode , response.getStatusCode());
+        Assert.assertEquals(statusCode, response.getStatusCode());
 
         //verify archive value in response
-        Assert.assertEquals(expectedArchive , response.jsonPath().getBoolean("archived"));
+        Assert.assertEquals(expectedArchive, response.jsonPath().getBoolean("archived"));
 
-       customerId=  response.jsonPath().getInt("id");
+        customerId = response.jsonPath().getInt("id");
 
     }
 }

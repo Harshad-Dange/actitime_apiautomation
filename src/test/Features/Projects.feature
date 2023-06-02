@@ -10,3 +10,4 @@ Feature: Verify all projects api
       | GET    | projects |
     Then I verify the status code as 200
     And I verify the project information in the response
+

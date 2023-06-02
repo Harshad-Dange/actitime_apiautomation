@@ -36,7 +36,7 @@ public class ProjectStepDefinition extends BaseClass {
     }
 
     @When("I set up the request structure to create project")
-    public void iSetUpTheRequestStructureToCreateProject(DataTable table) {
+    public void iSetUpTheRequestStructureToCreateProject() {
 
         projectName = new Faker().company().name();
         createProjectBody = new HashMap<>();
