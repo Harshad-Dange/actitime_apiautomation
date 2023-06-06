@@ -48,7 +48,7 @@ public class CustomerStepDefinition extends BaseClass {
                 pathParam = data.get("pathParam");
                 requestSpecification.pathParam("projectId", pathParam);
                 response = requestSpecification.get("/" + data.get("endPoint") + "/" + "{projectId}");
-            } else if (Objects.nonNull(customerId)) {
+            } else if (customerId != 0) {
                 pathParam = String.valueOf(customerId);
                 requestSpecification.pathParam("projectId", pathParam);
                 response = requestSpecification.get("/" + data.get("endPoint") + "/" + "{projectId}");
@@ -60,6 +60,18 @@ public class CustomerStepDefinition extends BaseClass {
         } else if (data.get("method").equals("POST")) {
             response = requestSpecification.post("/" + data.get("endPoint"));
 
+        } else if (data.get("method").equals("PUT")) {
+            if (Objects.isNull(data.get("pathParam"))) {
+                response = requestSpecification.put("/" + data.get("endPoint"));
+            } else if (data.get("pathParam").equals("userId")) {
+                response = requestSpecification.put("/" + data.get("endPoint") +"/"+ "{goRestUserId}");
+            }
+        }else if (data.get("method").equals("PATCH")) {
+            if (Objects.isNull(data.get("pathParam"))) {
+                response = requestSpecification.patch("/" + data.get("endPoint"));
+            } else if (data.get("pathParam").equals("userId")) {
+                response = requestSpecification.patch("/" + data.get("endPoint") +"/"+ "{goRestUserId}");
+            }
         }
         response.prettyPrint(); // print the response in pretty format
 

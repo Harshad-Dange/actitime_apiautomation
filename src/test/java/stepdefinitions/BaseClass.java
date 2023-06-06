@@ -8,5 +8,5 @@ public class BaseClass {
    static public Response response;
    public static int customerId;
    public static int projectId;
-
+   public static int userId;
 }

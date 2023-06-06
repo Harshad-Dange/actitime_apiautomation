@@ -1,12 +1,15 @@
 package stepdefinitions;
 
 import com.github.javafaker.Faker;
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
 import org.json.JSONObject;
 import org.junit.Assert;
 import pojo.UserTypes;
+import pojo.UsersGoRestPojo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,17 +17,21 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Objects;
 
-public class UsersStepDefinition extends BaseClass{
+public class UsersStepDefinition extends BaseClass {
 
     JSONObject createUserPayload;
     UserTypes userTypes;
+    UsersGoRestPojo goRestPojo;
+
+
     @Given("I setup the request structure to create user")
-    public void createUser(){
+    public void createUser() {
         createUserPayload = new JSONObject();
         String firstName = new Faker().name().firstName();
-        createUserPayload.put("email", firstName+ "@yopmail.com");
+        createUserPayload.put("email", firstName + "@yopmail.com");
         createUserPayload.put("firstName", firstName);
         createUserPayload.put("lastName", new Faker().name().lastName());
         createUserPayload.put("username", firstName);
@@ -63,9 +70,9 @@ public class UsersStepDefinition extends BaseClass{
         FileReader reader = new FileReader(new File(jsonFIlePath));
 //        reader.read()
 
-        byte[]  payload;
+        byte[] payload;
         try {
-            payload=  Files.readAllBytes(Path.of(jsonFIlePath)); // access the content from json file convert into byte array
+            payload = Files.readAllBytes(Path.of(jsonFIlePath)); // access the content from json file convert into byte array
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -118,4 +125,63 @@ public class UsersStepDefinition extends BaseClass{
         Assert.assertEquals(userTypes.getFirstName(), response.jsonPath().getString("firstName"));
         // rest all assertion will be in same way.....
     }
+
+    @Given("I setup the request structure to create user in gorest")
+    public void iSetupTheRequestStructureToCreateUser(DataTable table) {
+        Map<String, String> dataTable = table.asMaps().get(0);
+        String name = new Faker().name().fullName();
+        goRestPojo = new UsersGoRestPojo();
+        goRestPojo.setName(name);
+        goRestPojo.setEmail(name.replace(" ", ".") + "@gmail.com");
+        goRestPojo.setGender(dataTable.get("gender"));
+        goRestPojo.setStatus(dataTable.get("status"));
+        RestAssured.useRelaxedHTTPSValidation();
+        requestSpecification = RestAssured.given();
+        requestSpecification.baseUri("https://gorest.co.in")
+                .basePath("/public/v2")
+                .header("Authorization", "Bearer 526f4b67bf691be98e94abe1df982518410da2dd4e2250823f06bff490e19f12")
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(goRestPojo)
+                .log()
+                .all();
+    }
+
+    @Then("I verify user api response with status code {int}")
+    public void iVerifyUserIsGettingCreatedSuccessfullyInGotrest(int expStatusCode) {
+
+        Assert.assertEquals(expStatusCode, response.getStatusCode());
+        Assert.assertEquals(goRestPojo.getName(), response.jsonPath().getString("name"));
+        Assert.assertEquals(goRestPojo.getEmail(), response.jsonPath().getString("email"));
+        Assert.assertEquals(goRestPojo.getStatus(), response.jsonPath().getString("status"));
+        Assert.assertEquals(goRestPojo.getGender(), response.jsonPath().getString("gender"));
+        userId= response.jsonPath().getInt("id");
+    }
+
+    @And("I update the newly created user")
+    public void iUpdateTheNewlyCreatedUser(DataTable table) {
+        Map<String, String> dataTable = table.asMaps().get(0);
+        goRestPojo.setStatus(dataTable.get("status"));
+        goRestPojo.setGender(dataTable.get("gender"));
+        if (dataTable.get("name").equals("random")) {
+            goRestPojo.setName(new Faker().name().fullName());
+        } else if (dataTable.get("email").equals("random")) {
+            goRestPojo.setEmail(new Faker().name().firstName()+ "@gmail.com");
+        }
+        RestAssured.useRelaxedHTTPSValidation();
+        requestSpecification = RestAssured.given();
+        requestSpecification.baseUri("https://gorest.co.in")
+                .basePath("/public/v2")
+                .header("Authorization", "Bearer 526f4b67bf691be98e94abe1df982518410da2dd4e2250823f06bff490e19f12")
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .body(goRestPojo)
+                .log()
+                .all();
+
+        if(dataTable.get("pathParam").equals("userId")){
+            requestSpecification.pathParam("goRestUserId", userId);
+        }
+    }
+
 }

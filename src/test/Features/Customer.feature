@@ -3,6 +3,7 @@ Feature: Verify customer feature
 
   Scenario: Verify all customer information in get all customer api response
     Given I set up the request structure
+      |||
     When I hit an api
       | method | endPoint  |
       | GET    | customers |
