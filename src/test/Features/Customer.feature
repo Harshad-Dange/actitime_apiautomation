@@ -3,7 +3,7 @@ Feature: Verify customer feature
 
   Scenario: Verify all customer information in get all customer api response
     Given I set up the request structure
-      |||
+      |  |  |
     When I hit an api
       | method | endPoint  |
       | GET    | customers |
@@ -70,22 +70,35 @@ Feature: Verify customer feature
       | empty | String length must be between 1 and 255 |
       |       | Mandatory field is not specified        |
 
-    @ArchivedVerification
+  @ArchivedVerification
   Scenario: Verify customer should not be created with missing archived
     Given I set up the request structure to create customer payload
-      | name           | archived |
+      | name            | archived |
       | API Automation1 |          |
     When I hit an api
       | method | endPoint  |
       | POST   | customers |
     Then I verify the status code as 200 and archived value in response
-    |false|
+      | false |
 
 #    1. Verify customer should not be created with invalid cred
 #    2. Verify customer should not be created with invalid http method
 #    3. Verify customer should not be created with invalid endpoint
 #    4. Verify customer should not be created when hedders are missing
 #    5. Verify customer should not be created when payload is missing
+
+
+  @DeleteCustomer
+  Scenario: verify customer delete functionality
+    Given I set up the request structure to create customer payload
+      | name   | archived |
+      | random |          |
+    When I hit an api
+      | method | endPoint  |
+      | POST   | customers |
+    Then I verify customer is getting created successfully
+    When I delete the customer
+    Then I verify customer is getting deleted from the system
 
 
 

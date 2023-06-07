@@ -1,25 +1,26 @@
 package stepdefinitions;
 
+import com.github.javafaker.Faker;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.bs.A;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import org.junit.Assert;
+import pojo.CustomerPojo;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
-public class CustomerStepDefinition extends BaseClass {
+import static io.restassured.RestAssured.given;
 
+public class CustomerStepDefinition extends BaseClass {
+    CustomerPojo customerPayload;
     @Given("I set up the request structure")
     public void setup(Map<String, Object> queryParams) {
 
         RestAssured.useRelaxedHTTPSValidation();
-        requestSpecification = RestAssured.given();
+        requestSpecification = given();
         //uri =  https://demo.actitime.com
         requestSpecification.baseUri("https://demo.actitime.com")
                 .basePath("/api/v1")
@@ -64,13 +65,13 @@ public class CustomerStepDefinition extends BaseClass {
             if (Objects.isNull(data.get("pathParam"))) {
                 response = requestSpecification.put("/" + data.get("endPoint"));
             } else if (data.get("pathParam").equals("userId")) {
-                response = requestSpecification.put("/" + data.get("endPoint") +"/"+ "{goRestUserId}");
+                response = requestSpecification.put("/" + data.get("endPoint") + "/" + "{goRestUserId}");
             }
-        }else if (data.get("method").equals("PATCH")) {
+        } else if (data.get("method").equals("PATCH")) {
             if (Objects.isNull(data.get("pathParam"))) {
                 response = requestSpecification.patch("/" + data.get("endPoint"));
             } else if (data.get("pathParam").equals("userId")) {
-                response = requestSpecification.patch("/" + data.get("endPoint") +"/"+ "{goRestUserId}");
+                response = requestSpecification.patch("/" + data.get("endPoint") + "/" + "{goRestUserId}");
             }
         }
         response.prettyPrint(); // print the response in pretty format
@@ -189,7 +190,7 @@ public class CustomerStepDefinition extends BaseClass {
 
 
         RestAssured.useRelaxedHTTPSValidation();
-        requestSpecification = RestAssured.given();
+        requestSpecification = given();
         requestSpecification.baseUri("https://demo.actitime.com")
                 .basePath("/api/v1")
                 .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
@@ -228,7 +229,7 @@ public class CustomerStepDefinition extends BaseClass {
     public void iSetUpTheRequestStructureGetCustomerInformation() {
 
         RestAssured.useRelaxedHTTPSValidation();
-        requestSpecification = RestAssured.given();
+        requestSpecification = given();
         //uri =  https://demo.actitime.com
         requestSpecification.baseUri("https://demo.actitime.com")
                 .basePath("/api/v1")
@@ -254,11 +255,29 @@ public class CustomerStepDefinition extends BaseClass {
     }
 
     @Given("I set up the request structure to create customer payload")
-    public void iSetUpTheRequestStructureToCreateCustomerPayload(DataTable table) throws IOException {
+    public void iSetUpTheRequestStructureToCreateCustomerPayload(DataTable table) {
 
         Map<String, String> payload = table.asMaps().get(0);
+
+        customerPayload = new CustomerPojo();
+//        condition?:
+        String name = (payload.get("name").equals("random")) ? new Faker().name().firstName() : payload.get("name");
+        customerPayload.setName(name);
+//        if(Objects.nonNull(payload.get("archived"))){
+//            customerPayload.setArchived(Boolean.valueOf(payload.get("archived")));
+//        }
+        Optional.ofNullable(payload.get("archived"))
+                .ifPresentOrElse(val -> {
+                    boolean archived = Boolean.parseBoolean(val);
+                    customerPayload.setArchived(archived);
+                },()-> System.out.println("Empty value in archived"));
+
+
+//        if (payload.get("name").equals("random")) {
+//            payload.replace("name", new Faker().name().firstName());
+//        }
         RestAssured.useRelaxedHTTPSValidation();
-        requestSpecification = RestAssured.given();
+        requestSpecification = given();
         //uri =  https://demo.actitime.com
         requestSpecification.baseUri("https://demo.actitime.com")
                 .basePath("/api/v1")
@@ -267,7 +286,8 @@ public class CustomerStepDefinition extends BaseClass {
 //                .basic("admin", "manager")  // declared in the AuthenticationSpecification interface and return RequestSpecification referance
                 .header("Accept", "application/json")
                 .header("Content-Type", "application/json")
-                .body(payload).log().all();
+                .body(customerPayload)
+                .log().all();
 
 
     }
@@ -283,5 +303,48 @@ public class CustomerStepDefinition extends BaseClass {
 
         customerId = response.jsonPath().getInt("id");
 
+    }
+
+    @Then("I verify customer is getting created successfully")
+    public void iVerifyCustomerIsGettingCreatedSuccessfully() {
+
+        Assert.assertEquals(200, response.getStatusCode());
+        Assert.assertEquals(customerPayload.getName(), response.jsonPath().getString("name"));
+        Assert.assertEquals(customerPayload.getDescription(), response.jsonPath().getString("description"));
+        Assert.assertEquals(customerPayload.isArchived(), response.jsonPath().getBoolean("archived"));
+        customerId = response.jsonPath().getInt("id");
+
+    }
+
+    @When("I delete the customer")
+    public void iDeleteTheCustomer() {
+
+        RestAssured.useRelaxedHTTPSValidation();
+/*        requestSpecification = given();
+        requestSpecification.baseUri("https://demo.actitime.com")
+                .basePath("/api/v1/customers")
+                .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .pathParam("customerId", customerId)
+                .log().all()
+                .delete("{customerId}")
+                .then().assertThat().statusCode(204);*/
+//        Assert.assertEquals(204, response.getStatusCode());
+
+        given().baseUri("https://demo.actitime.com")
+                .basePath("/api/v1/customers")
+                .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .pathParam("customerId", customerId)
+                .log().all()
+                .when()
+                .delete("{customerId}")
+                .then().assertThat().statusCode(204);
+    }
+
+    @Then("I verify customer is getting deleted from the system")
+    public void iVerifyCustomerIsGettingDeletedFromTheSystem() {
     }
 }

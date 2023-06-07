@@ -149,7 +149,6 @@ public class UsersStepDefinition extends BaseClass {
 
     @Then("I verify user api response with status code {int}")
     public void iVerifyUserIsGettingCreatedSuccessfullyInGotrest(int expStatusCode) {
-
         Assert.assertEquals(expStatusCode, response.getStatusCode());
         Assert.assertEquals(goRestPojo.getName(), response.jsonPath().getString("name"));
         Assert.assertEquals(goRestPojo.getEmail(), response.jsonPath().getString("email"));

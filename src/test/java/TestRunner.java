@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/Features/",
         glue = "stepdefinitions",
-        tags = " @CustomerSorting"
+        tags = "@DeleteCustomer"
 )
 public class TestRunner {
 
