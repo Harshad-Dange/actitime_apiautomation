@@ -1,6 +1,6 @@
+@SampleExample
 Feature: verify sample api response
 
-  @SampleExample
   Scenario Outline: verify rick and morty api response
     Given I get the response from rick and morty api
       | status  | <status>  |
@@ -13,3 +13,9 @@ Feature: verify sample api response
       | unknown |          | Female |
       | Alive   | Humanoid |        |
 
+
+  Scenario: verify rick and morty api response
+    Given I get the response from rick and morty api
+      | name  | Rick |
+    #Then I verify name in the response
+    Then I verify the response with status code 200
