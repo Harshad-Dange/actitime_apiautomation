@@ -14,7 +14,7 @@ Feature: Verify users features
     When I hit an api
       | method | endPoint |
       | POST   | users    |
-     # Then I verify user is getting created successfully
+      Then I verify user is getting created successfully
 
 
   @ClassObject

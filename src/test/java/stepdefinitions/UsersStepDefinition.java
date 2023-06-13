@@ -6,13 +6,13 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.junit.Assert;
 import pojo.UserTypes;
 import pojo.UsersGoRestPojo;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,12 +63,23 @@ public class UsersStepDefinition extends BaseClass {
     }
 
     @Given("I setup the request structure to create user using json file")
-    public void iSetupTheRequestStructureToCreateUserUsingJsonFile() throws FileNotFoundException {
+    public void iSetupTheRequestStructureToCreateUserUsingJsonFile() throws IOException, ParseException {
 
         String jsonFIlePath = "src/test/resources/CreateUserPayload.json";
 
-        FileReader reader = new FileReader(new File(jsonFIlePath));
-//        reader.read()
+        //code to read the json content of the file
+        JSONParser jsonParser= new JSONParser();
+        //read the json file
+        FileReader reader= new FileReader(jsonFIlePath);
+        //parse the json file content
+        Object object = jsonParser.parse(reader);
+        //convert object into JSONObject
+//        JSONObject jsonObject = (JSONObject)object;
+
+        createUserPayload = (JSONObject)object;
+
+        System.out.println(createUserPayload);
+
 
         byte[] payload;
         try {

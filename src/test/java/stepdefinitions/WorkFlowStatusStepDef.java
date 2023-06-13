@@ -10,23 +10,22 @@ import org.junit.Assert;
 import pojo.CreateWorkFlowResponsePojo;
 import pojo.WorkFlowStatusPojo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.restassured.RestAssured.given;
 
-public class WorkFlowStatusStepDef extends  BaseClass {
+public class WorkFlowStatusStepDef extends BaseClass {
 
     WorkFlowStatusPojo statusPojo;
     CreateWorkFlowResponsePojo workFlowResponsePojo;
+
     @Given("I create a workflow status")
     public void createWorkflow(Map<String, String> dataTable) {
         statusPojo = new WorkFlowStatusPojo();
         statusPojo.setName(new Faker().name().firstName());
         statusPojo.setType(dataTable.get("type"));
         RestAssured.useRelaxedHTTPSValidation();
-       response = given()
+        response = given()
                 .baseUri("https://demo.actitime.com")
                 .basePath("/api/v1")
                 .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
@@ -54,7 +53,7 @@ public class WorkFlowStatusStepDef extends  BaseClass {
 //        Assert.assertEquals(statusPojo.getName(), response.jsonPath().getString("name") );
 //        Assert.assertEquals(statusPojo.getType(), response.jsonPath().getString("type"));
 
-        Assert.assertEquals(statusPojo.getName(), workFlowResponsePojo.getName() );
+        Assert.assertEquals(statusPojo.getName(), workFlowResponsePojo.getName());
         Assert.assertEquals(statusPojo.getType(), workFlowResponsePojo.getType());
 
         //verify allowedActions field details
@@ -81,31 +80,76 @@ public class WorkFlowStatusStepDef extends  BaseClass {
 
         Assert.assertEquals(200, response.getStatusCode());
 
-        CreateWorkFlowResponsePojo[] obj=  response.jsonPath().getObject("items",CreateWorkFlowResponsePojo[].class);
+        CreateWorkFlowResponsePojo[] obj = response.jsonPath().getObject("items", CreateWorkFlowResponsePojo[].class);
         //print the length of an object
         System.out.println(obj.length);
 
-        boolean flag =false;
+        boolean flag = false;
         //verify newly created workflow in the response
-        for(CreateWorkFlowResponsePojo responsePojo : obj){
+        for (CreateWorkFlowResponsePojo responsePojo : obj) {
             // check if the get response id is equals with the id of create workflow status response
-            if(responsePojo.getId() == workFlowResponsePojo.getId()){
-                    flag= true;
+            if (responsePojo.getId() == workFlowResponsePojo.getId()) {
+                flag = true;
             }
 
         }
         List<Long> ids = new ArrayList<>();
-        for(CreateWorkFlowResponsePojo responsePojo : obj){
+        for (CreateWorkFlowResponsePojo responsePojo : obj) {
             // check if the get response id is equals with the id of create workflow status response
-           ids.add(responsePojo.getId());
+            ids.add(responsePojo.getId());
         }
         Assert.assertTrue(ids.contains(workFlowResponsePojo.getId()));
         Assert.assertTrue(flag);
-
-
-
-
 //            response.as(CreateWorkFlowResponsePojo.class);
+
+    }
+
+    @Given("I hit an api to get all workflowStatuses")
+    public void iHitAnApiToGetAllWorkflowStatuses() {
+        RestAssured.useRelaxedHTTPSValidation();
+        response = given()
+                .baseUri("https://demo.actitime.com")
+                .basePath("/api/v1")
+                .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .log().all()
+                .when().get("/workflowStatuses");
+    }
+
+    @Then("I verify the response is in ascending order by id")
+    public void iVerifyTheResponseIsInAscendingOrderById() {
+
+        Assert.assertEquals(200, response.getStatusCode());
+
+//        CreateWorkFlowResponsePojo[] responsePojo = response.jsonPath().getObject("items", CreateWorkFlowResponsePojo[].class);
+//        System.out.println(responsePojo);
+
+        List<CreateWorkFlowResponsePojo> actualResponsePojo = response.jsonPath().getList("items",CreateWorkFlowResponsePojo.class);
+
+        // get all ids of workflowstatus
+/*
+        List<Long> actualIds= new ArrayList<>();
+        responsePojo.forEach(obj->{
+            actualIds.add(obj.getId());
+        });
+*/
+
+        List<CreateWorkFlowResponsePojo> expectedResponse= new ArrayList<>();
+        expectedResponse.addAll(actualResponsePojo);
+
+        Comparator<CreateWorkFlowResponsePojo> comparator = new Comparator<CreateWorkFlowResponsePojo>(){
+            @Override
+            public int compare(CreateWorkFlowResponsePojo o1, CreateWorkFlowResponsePojo o2) {
+                return (int)o1.getId()-(int)o2.getId();
+            }
+        };
+        //sort the expectedResponse in ascending order
+        Collections.sort(expectedResponse,comparator);
+
+        Assert.assertEquals(expectedResponse,actualResponsePojo);
+
+        Assert.assertTrue(expectedResponse.containsAll(actualResponsePojo));
 
 
     }
