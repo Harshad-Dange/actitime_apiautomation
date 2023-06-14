@@ -5,16 +5,21 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
-import java.sql.SQLOutput;
-import java.util.Arrays;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
+import static io.restassured.RestAssured.requestSpecification;
 
 public class PIMStepDefinition {
     WebDriver driver;
@@ -116,6 +121,34 @@ public class PIMStepDefinition {
         System.out.println(colors.asLists());
 
 
+
+    }
+
+    @Given("I upload the file")
+    public void iUploadTheFile() throws IOException {
+        File file = new File("/Users/harshad_dange/Documents/test_data 2.csv");
+        RestAssured.useRelaxedHTTPSValidation();
+        requestSpecification = RestAssured.given();
+        Response response = requestSpecification.baseUri("https://postman-echo.com")
+                .header("Accept", ContentType.JSON)
+                .multiPart("file", file, ContentType.MULTIPART.toString())
+                .log().all().post("/post");
+
+        response.prettyPrint();
+
+        //https://github.com/AntonOsika/gpt-engineer/raw/main/tests/__init__.py
+        requestSpecification = RestAssured.given();
+        response = requestSpecification.baseUri("https://github.com/")
+                .basePath("AntonOsika/gpt-engineer/raw/main/tests/")
+                .log().all()
+                .get("test_db.py");
+
+       byte[] byteArray = response.asByteArray();
+
+        FileOutputStream outputStream= new FileOutputStream("/Users/harshad_dange/Documents/test_db.py");
+        outputStream.write(byteArray);
+        outputStream.flush();
+        outputStream.close();
 
     }
 }

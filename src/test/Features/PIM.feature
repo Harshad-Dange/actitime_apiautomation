@@ -103,4 +103,8 @@ Feature: Verify the PIM module
     Then I delete the employee
 
 
+    @upload
+    Scenario: Upload file
+      Given I upload the file
+
 
