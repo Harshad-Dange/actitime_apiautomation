@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/Features/",
         glue = "stepdefinitions",
-        tags = "@FileDownload"
+        tags = "@mockServer"
 )
 public class TestRunner {
 
