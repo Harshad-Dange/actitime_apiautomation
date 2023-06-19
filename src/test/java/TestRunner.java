@@ -6,7 +6,9 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/Features/",
         glue = "stepdefinitions",
-        tags = "@mockServer"
+
+        tags = "@XmlVerification",
+        plugin = {"pretty"}
 )
 public class TestRunner {
 

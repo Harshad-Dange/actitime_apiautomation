@@ -2,7 +2,6 @@ package stepdefinitions;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.Given;
@@ -63,12 +62,12 @@ public class MockServerStepDef extends BaseClass {
                 "  ]\n" +
                 "}";
 
-        WireMock.stubFor(get("/countries")
-                .willReturn(aResponse()
-                        .withStatus(200)
-//                        .withHeader("Content-Type",ContentType.JSON.toString())
-                        .withBody(responseBody))
-        );
+//        WireMock.stubFor(get("/countries")
+//                .willReturn(aResponse()
+//                        .withStatus(200)
+////                        .withHeader("Content-Type",ContentType.JSON.toString())
+//                        .withBody(responseBody))
+//        );
 
     }
 
@@ -80,12 +79,12 @@ public class MockServerStepDef extends BaseClass {
     @Given("I hit an api to get countries from wiremock server")
     public void getWiremockContent(){
         RestAssured.useRelaxedHTTPSValidation();
-        response = given()
-                .baseUri("http://localhost:8080")
-                .log().all()
-                .header("Accept", ContentType.JSON)
-                .when().get("/countries");
-        response.prettyPrint();
+//        response = given()
+//                .baseUri("http://localhost:8080")
+//                .log().all()
+//                .header("Accept", ContentType.JSON)
+//                .when().get("/countries");
+//        response.prettyPrint();
 
     }
 
