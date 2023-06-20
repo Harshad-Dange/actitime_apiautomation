@@ -28,7 +28,7 @@ public class CustomerStepDefinition extends BaseClass {
 //                .auth()
 //                .basic("admin", "manager")  // declared in the AuthenticationSpecification interface and return RequestSpecification referance
                 .header("Accept", "application/json")
-                .header("Content-Type", "application/json")
+//                .header("Content-Type", "application/json")
                 .log()
                 .all();
         //check if query param is not null... if it is not null then add query params in the requestSpecification
@@ -49,7 +49,7 @@ public class CustomerStepDefinition extends BaseClass {
                 pathParam = data.get("pathParam");
                 requestSpecification.pathParam("projectId", pathParam);
                 response = requestSpecification.get("/" + data.get("endPoint") + "/" + "{projectId}");
-            } else if (customerId != 0) {
+            } else if (Objects.nonNull(customerId) && customerId != 0 ) {
                 pathParam = String.valueOf(customerId);
                 requestSpecification.pathParam("projectId", pathParam);
                 response = requestSpecification.get("/" + data.get("endPoint") + "/" + "{projectId}");
@@ -346,5 +346,32 @@ public class CustomerStepDefinition extends BaseClass {
 
     @Then("I verify customer is getting deleted from the system")
     public void iVerifyCustomerIsGettingDeletedFromTheSystem() {
+    }
+
+    @Given("I set up the request structure to get all customers")
+    public void iSetUpTheRequestStructureToGetAllCustomers() {
+        RestAssured.useRelaxedHTTPSValidation();
+        requestSpecification = given();
+        //uri =  https://demo.actitime.com
+        requestSpecification.baseUri("https://demo.actitime.com")
+                .basePath("/api/v1")
+                .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
+//                .auth()
+//                .basic("admin", "manager")  // declared in the AuthenticationSpecification interface and return RequestSpecification referance
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .log()
+                .all();
+    }
+
+    @Given("I create customer with below details")
+    public void createCustomer() {
+
+    }
+
+    @Then("I verify customer is created")
+    public void verifyCreateCustomer() {
+
+
     }
 }

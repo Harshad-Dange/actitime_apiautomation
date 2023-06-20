@@ -4,14 +4,16 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
 
+import javax.swing.text.html.Option;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-public class DepartmentStepDefinitions extends  BaseClass{
+public class DepartmentStepDefinitions extends BaseClass {
 
     @Given("I setup the request structure to get all department")
-    public void getAllDepartment(){
+    public void getAllDepartment() {
         RestAssured.useRelaxedHTTPSValidation();
         requestSpecification = RestAssured.given();
         //uri =  https://demo.actitime.com
@@ -33,20 +35,18 @@ public class DepartmentStepDefinitions extends  BaseClass{
 
         List<Integer> ids = response.jsonPath().getList("items.id");
 
-        Collections.sort(ids);
+        Optional.ofNullable(ids).ifPresent(list -> {
 
-        System.out.println(ids);
+            Collections.sort(list);
 
-        ids.forEach(id->{
-            itemsList.forEach(map->{
-                if(map.get("id").equals(id)){
-                    System.out.println("Id: "+ id + " Name: "+ map.get("name"));
+            System.out.println(list);
+
+            list.forEach(id -> itemsList.forEach(map -> {
+                if (map.get("id").equals(id)) {
+                    System.out.println("Id: " + id + " Name: " + map.get("name"));
                 }
-            });
+            }));
         });
-
-
-
 
 
     }

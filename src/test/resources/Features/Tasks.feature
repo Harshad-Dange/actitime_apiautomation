@@ -2,7 +2,7 @@ Feature: Verify tasks api
 
   @Task
   Scenario: Verify get all task api
-    Given I set up the request structure
+    Given I set up the request structure to get all task
     When I hit an api
       | method | endPoint |
       | GET    | tasks    |

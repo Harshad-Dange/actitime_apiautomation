@@ -2,6 +2,7 @@ package stepdefinitions;
 
 import com.google.gson.JsonObject;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
@@ -97,5 +98,18 @@ public class TasksStepDefinitions extends BaseClass{
         Assert.assertEquals(customerId, response.jsonPath().getInt("customerId"));
         Assert.assertEquals(projectId, response.jsonPath().getInt("projectId"));
         Assert.assertEquals(Integer.parseInt(createTaskBody.get("estimatedTime")), response.jsonPath().getInt("estimatedTime"));
+    }
+
+    @Given("I set up the request structure to get all task")
+    public void iSetUpTheRequestStructureToGetAllTask() {
+        RestAssured.useRelaxedHTTPSValidation();
+        requestSpecification = RestAssured.given();
+        requestSpecification.baseUri("https://demo.actitime.com")
+                .basePath("/api/v1")
+                .header("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
+                .header("Accept", "application/json")
+                .header("Content-Type", "application/json")
+                .log()
+                .all();
     }
 }

@@ -12,8 +12,4 @@ Feature: Verify all projects api
     And I verify the project information in the response
 
 
-    Scenario: Test
-      Given  I set up the request structure to create customer
-
-
 

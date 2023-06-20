@@ -2,8 +2,7 @@
 Feature: Verify customer feature
 
   Scenario: Verify all customer information in get all customer api response
-    Given I set up the request structure
-      |  |  |
+    Given I set up the request structure to get all customers
     When I hit an api
       | method | endPoint  |
       | GET    | customers |
@@ -11,7 +10,7 @@ Feature: Verify customer feature
       | Joda Consulting Inc |
 
   Scenario: Verify customer information in get by id api
-    Given I set up the request structure
+    Given I set up the request structure to get all customers
     When I hit an api
       | method | endPoint  | pathParam |
       | GET    | customers | 6         |
@@ -99,6 +98,12 @@ Feature: Verify customer feature
     Then I verify customer is getting created successfully
     When I delete the customer
     Then I verify customer is getting deleted from the system
+
+
+    Scenario: Create Customer
+      Given I create customer with below details
+      |endPoint|customers|
+      Then I verify customer is created
 
 
 

@@ -6,6 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -96,7 +97,7 @@ public class UsersStepDefinition extends BaseClass {
 //                .auth()
 //                .basic("admin", "manager")  // declared in the AuthenticationSpecification interface and return RequestSpecification referance
                 .header("Accept", "application/json")
-                .header("Content-Type", "application/json")
+//                .header("Content-Type", ContentType.MULTIPART)
                 .body(payload)
                 .log()
                 .all();

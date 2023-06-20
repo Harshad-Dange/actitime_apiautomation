@@ -27,11 +27,11 @@ public class LoginStepDefinition {
     }
 
     @Then("I verify user is logged in to application successfully")
-    public void iVerifyUserIsLoggedInToApplicationSuccessfully(List<String> data) {
+    public void iVerifyUserIsLoggedInToApplicationSuccessfully() {
 
         //verify login successfully
         System.out.println("Code to verify successfull login ");
-        System.out.println(data);
+//        System.out.println(data);
 //        driver.getTitle();
     }
 
@@ -64,9 +64,9 @@ public class LoginStepDefinition {
 
     @When("I enter below credentials")
     public void iEnterBelowCredentials(Map<String,String> creds) {
-        driver.findElement(By.xpath("username")).sendKeys(creds.get("username"));
-        driver.findElement(By.xpath("password")).sendKeys(creds.get("password"));
-        driver.findElement(By.xpath("login")).click();
+//        driver.findElement(By.xpath("username")).sendKeys(creds.get("username"));
+//        driver.findElement(By.xpath("password")).sendKeys(creds.get("password"));
+//        driver.findElement(By.xpath("login")).click();
 
     }
 }

@@ -2,6 +2,7 @@ package stepdefinitions;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -45,9 +46,7 @@ public class PIMStepDefinition {
             Map<String,String> map= data.get(0);
             System.out.println(map.get("firstName"));
             System.out.println(map.get("empId"));
-
-            System.out.println(empDetails.asList());
-    }
+        }
 
     @Then("Verify employee added successfully")
     public void verifyEmployeeAddedSuccessfully() {
@@ -150,5 +149,21 @@ public class PIMStepDefinition {
         outputStream.flush();
         outputStream.close();
 
+    }
+
+    @Then("I verify employee added successfully in the system")
+    public void iVerifyEmployeeAddedSuccessfullyInTheSystem() {
+    }
+
+    @And("I update the employee information")
+    public void iUpdateTheEmployeeInformation() {
+    }
+
+    @And("I search the updated employee")
+    public void iSearchTheUpdatedEmployee() {
+    }
+
+    @Then("I delete the employee")
+    public void iDeleteTheEmployee() {
     }
 }
