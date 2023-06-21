@@ -1,4 +1,4 @@
-package stepdefinitions;
+package com.cybersuccess.actitime.stepdefinitions;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;

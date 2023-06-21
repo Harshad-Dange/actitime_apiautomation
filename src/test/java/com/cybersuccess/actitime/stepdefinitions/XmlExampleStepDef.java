@@ -1,11 +1,10 @@
-package stepdefinitions;
+package com.cybersuccess.actitime.stepdefinitions;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
 import io.restassured.http.Header;
 import io.restassured.http.Headers;
-import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 
 import static org.hamcrest.Matchers.*;

@@ -1,4 +1,4 @@
-package stepdefinitions;
+package com.cybersuccess.actitime.stepdefinitions;
 
 import com.github.javafaker.Faker;
 import io.cucumber.datatable.DataTable;
@@ -6,7 +6,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;

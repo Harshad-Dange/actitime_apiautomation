@@ -1,14 +1,12 @@
-package stepdefinitions;
+package com.cybersuccess.actitime.stepdefinitions;
 
 import com.github.javafaker.Faker;
-import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import org.junit.Assert;
 
-import java.security.SecureRandom;
 import java.util.*;
 
 public class ProjectStepDefinition extends BaseClass {
