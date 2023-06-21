@@ -1,8 +1,10 @@
-package stepdefinitions;
+package com.cybersuccess.actitime.stepdefinitions;
 
+import com.cybersuccess.actitime.config.ApiRequestBuilder;
+import com.cybersuccess.actitime.config.PropertyHandler;
+import com.cybersuccess.actitime.entities.CustomerInfo;
 import com.github.javafaker.Faker;
 import io.cucumber.datatable.DataTable;
-import io.cucumber.java.bs.A;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -10,12 +12,16 @@ import io.restassured.RestAssured;
 import org.junit.Assert;
 import pojo.CustomerPojo;
 
+import java.io.IOException;
 import java.util.*;
 
 import static io.restassured.RestAssured.given;
 
 public class CustomerStepDefinition extends BaseClass {
     CustomerPojo customerPayload;
+//    ApiRequestBuilder requestBuilder = ApiRequestBuilder.getInstance();
+     int customerId;
+
     @Given("I set up the request structure")
     public void setup(Map<String, Object> queryParams) {
 
@@ -49,7 +55,7 @@ public class CustomerStepDefinition extends BaseClass {
                 pathParam = data.get("pathParam");
                 requestSpecification.pathParam("projectId", pathParam);
                 response = requestSpecification.get("/" + data.get("endPoint") + "/" + "{projectId}");
-            } else if (Objects.nonNull(customerId) && customerId != 0 ) {
+            } else if (Objects.nonNull(customerId) && customerId != 0) {
                 pathParam = String.valueOf(customerId);
                 requestSpecification.pathParam("projectId", pathParam);
                 response = requestSpecification.get("/" + data.get("endPoint") + "/" + "{projectId}");
@@ -270,7 +276,7 @@ public class CustomerStepDefinition extends BaseClass {
                 .ifPresentOrElse(val -> {
                     boolean archived = Boolean.parseBoolean(val);
                     customerPayload.setArchived(archived);
-                },()-> System.out.println("Empty value in archived"));
+                }, () -> System.out.println("Empty value in archived"));
 
 
 //        if (payload.get("name").equals("random")) {
@@ -365,13 +371,24 @@ public class CustomerStepDefinition extends BaseClass {
     }
 
     @Given("I create customer with below details")
-    public void createCustomer() {
-
+    public void createCustomer(Map<String, String> data) throws IOException {
+        PropertyHandler property = new PropertyHandler("endpoints.properties");
+        String endpoint = property.getProperty(data.get("endPoint"));
+        ApiRequestBuilder requestBuilder = new ApiRequestBuilder();
+        //Builder Pattern
+        CustomerInfo customerDetails = CustomerInfo.builder()
+                .name(new Faker().company().name())
+                .description("Sample Desc")
+                .build();
+        requestBuilder.postRequest(customerDetails,endpoint);
+        requestBuilder.response.prettyPrint();
+        customerId= requestBuilder.response.jsonPath().getInt("id");
     }
 
     @Then("I verify customer is created")
-    public void verifyCreateCustomer() {
-
-
+    public void verifyCreateCustomer() throws IOException {
+        ApiRequestBuilder requestBuilder = new ApiRequestBuilder();
+        requestBuilder.getRequestWithPathParam(String.valueOf(customerId), "/customers");
+        requestBuilder.response.prettyPrint();
     }
 }

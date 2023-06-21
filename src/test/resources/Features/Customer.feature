@@ -29,7 +29,7 @@ Feature: Verify customer feature
       | -name | desc  |
       | name  | asc   |
 
-  @CreateCustomer
+
   Scenario: Verify create customer using valid details
     Given I set up the request structure to create customer
       | name           | archived |
@@ -100,10 +100,11 @@ Feature: Verify customer feature
     Then I verify customer is getting deleted from the system
 
 
-    Scenario: Create Customer
-      Given I create customer with below details
-      |endPoint|customers|
-      Then I verify customer is created
+  @CreateCustomer
+  Scenario: Create Customer
+    Given I create customer with below details
+      | endPoint | customers |
+    Then I verify customer is created
 
 
 
