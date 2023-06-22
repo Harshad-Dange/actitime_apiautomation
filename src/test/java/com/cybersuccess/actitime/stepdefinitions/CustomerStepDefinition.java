@@ -9,6 +9,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 import org.junit.Assert;
 import pojo.CustomerPojo;
 
@@ -19,7 +22,7 @@ import static io.restassured.RestAssured.given;
 
 public class CustomerStepDefinition extends BaseClass {
     CustomerPojo customerPayload;
-//    ApiRequestBuilder requestBuilder = ApiRequestBuilder.getInstance();
+    ApiRequestBuilder requestBuilder = ApiRequestBuilder.getInstance();
      int customerId;
 
     @Given("I set up the request structure")
@@ -368,13 +371,23 @@ public class CustomerStepDefinition extends BaseClass {
                 .header("Content-Type", "application/json")
                 .log()
                 .all();
+
+        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
+        RequestSpecification reqSpec  = requestSpecBuilder.setBaseUri("https://demo.actitime.com")
+                .setBasePath("/api/v1")
+                .setAccept(ContentType.JSON)
+                .setContentType(ContentType.JSON)
+                .addHeader("Authorization", "Basic YWRtaW46bWFuYWdlcg==")
+                .build();
+
+       requestSpecification = given().spec(reqSpec).log().all();
+
     }
 
     @Given("I create customer with below details")
     public void createCustomer(Map<String, String> data) throws IOException {
         PropertyHandler property = new PropertyHandler("endpoints.properties");
         String endpoint = property.getProperty(data.get("endPoint"));
-        ApiRequestBuilder requestBuilder = new ApiRequestBuilder();
         //Builder Pattern
         CustomerInfo customerDetails = CustomerInfo.builder()
                 .name(new Faker().company().name())
@@ -387,7 +400,6 @@ public class CustomerStepDefinition extends BaseClass {
 
     @Then("I verify customer is created")
     public void verifyCreateCustomer() throws IOException {
-        ApiRequestBuilder requestBuilder = new ApiRequestBuilder();
         requestBuilder.getRequestWithPathParam(String.valueOf(customerId), "/customers");
         requestBuilder.response.prettyPrint();
     }

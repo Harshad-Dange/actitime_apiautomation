@@ -1,5 +1,7 @@
 package com.cybersuccess.actitime.config;
 
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
@@ -20,7 +22,7 @@ import static io.restassured.RestAssured.given;
 
 public class ApiRequestBuilder {
 
-    public RequestSpecification requestSpecification = given();
+    public RequestSpecification requestSpecification= given();
 
     public Response response;
     private static ApiRequestBuilder apiRequestBuilder;
@@ -36,44 +38,47 @@ public class ApiRequestBuilder {
 
     public void setRequestConfig() throws IOException {
         PropertyHandler property = new PropertyHandler("config.properties");
-        requestSpecification.relaxedHTTPSValidation()
-                .baseUri(property.getProperty("baseUri"))
-                .basePath(property.getProperty("basePath"))
-                .header("Accept", ContentType.JSON)
-                .header("Content-Type", ContentType.JSON)
-                .header("Authorization", property.getProperty("token"))
-                .log().all();
+        RestAssured.useRelaxedHTTPSValidation();
+        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
+        requestSpecification = requestSpecBuilder.setBaseUri(property.getProperty("baseUri"))
+                .setContentType(ContentType.JSON)
+                .setAccept(ContentType.JSON)
+                .addHeader("Authorization", property.getProperty("token"))
+                .setBasePath(property.getProperty("basePath"))
+                .build();
     }
 
-    public void execute(Method method, String endPoint) {
+   public void execute(Method method, String endPoint) {
+        RequestSpecification rspec = given().log().all();
         switch (method) {
             case GET:
                 response = Objects.isNull(pathParam)
-                        ? requestSpecification.get(endPoint)
-                        : requestSpecification.get(endPoint+"/"+"{pathParam}");
+                        ? rspec.spec(requestSpecification).get(endPoint)
+                        : rspec.spec(requestSpecification).get(endPoint + "/" + "{pathParam}");
                 break;
             case POST:
                 response = Objects.isNull(pathParam)
-                        ? requestSpecification.post(endPoint)
-                        : requestSpecification.post(endPoint+"/"+"{pathParam}");
+                        ? rspec.spec(requestSpecification).post(endPoint)
+                        : rspec.spec(requestSpecification).post(endPoint + "/" + "{pathParam}");
                 break;
             case PUT:
                 response = Objects.isNull(pathParam)
-                        ? requestSpecification.put(endPoint)
-                        : requestSpecification.put(endPoint+"/"+"{pathParam}");
+                        ? rspec.spec(requestSpecification).put(endPoint)
+                        : rspec.spec(requestSpecification).put(endPoint + "/" + "{pathParam}");
                 break;
             case PATCH:
                 response = Objects.isNull(pathParam)
-                        ? requestSpecification.patch(endPoint)
-                        : requestSpecification.patch(endPoint+"/"+"{pathParam}");
+                        ? rspec.spec(requestSpecification).patch(endPoint)
+                        : rspec.spec(requestSpecification).patch(endPoint + "/" + "{pathParam}");
                 break;
             case DELETE:
                 response = Objects.isNull(pathParam)
-                        ? requestSpecification.delete(endPoint)
-                        : requestSpecification.delete(endPoint+"/"+"{pathParam}");
+                        ? rspec.spec(requestSpecification).delete(endPoint)
+                        : rspec.spec(requestSpecification).delete(endPoint + "/" + "{pathParam}");
                 break;
         }
     }
+
 
     public void setQueryParams(Map<String, Object> queryParams) {
         Optional.ofNullable(queryParams).ifPresent(params -> requestSpecification.queryParams(params));
@@ -87,19 +92,20 @@ public class ApiRequestBuilder {
 
     }
 
-    public void setRequestBody(String body) {
-        Optional.ofNullable(body).ifPresent(obj -> requestSpecification.body(obj));
+    /*    public void setRequestBody(String body) {
+            Optional.ofNullable(body).ifPresent(obj -> requestSpecification.body(obj));
 
-    }
+        }
+     public void setRequestBody(Map<String, Object> body) {
+            Optional.ofNullable(body).ifPresent(obj -> requestSpecification.body(obj));
+        }
 
+     */
     public <T> void setRequestBody(T classObject) {
         Optional.ofNullable(classObject).ifPresent(obj -> requestSpecification.body(obj));
 
     }
 
-    public void setRequestBody(Map<String, Object> body) {
-        Optional.ofNullable(body).ifPresent(obj -> requestSpecification.body(obj));
-    }
 
     public JSONObject setRequestBodyWithFile(String filePath) {
         JSONObject jsonObject = null;
